@@ -76,3 +76,31 @@ describe("GET /musicians/:id", () => {
     );
   });
 });
+
+describe("GET /bands endpoint", () => {
+  // Write your tests here
+
+  test("testing if the GET request is successful", async () => {
+    // Sends request to `/musicians` endpoint
+    const response = await request(app).get("/bands");
+    expect(response.status).toBeGreaterThanOrEqual(200);
+    expect(response.status).toBeLessThan(300);
+  });
+
+  test("testing the response data", async () => {
+    const response = await request(app).get("/bands");
+    const bandsData = JSON.parse(response.text);
+
+    expect(Array.isArray(bandsData)).toBe(true);
+
+    // the expect statement below expects an array of only objects and will check all of them
+    expect(bandsData).toEqual(
+      bandsData.map(() =>
+        expect.objectContaining({
+          name: expect.any(String),
+          genre: expect.any(String),
+        })
+      )
+    );
+  });
+});

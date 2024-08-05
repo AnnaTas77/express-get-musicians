@@ -1,6 +1,6 @@
 const express = require("express");
 const app = express();
-const { Musician } = require("../models/index");
+const { Musician, Band } = require("../models/index");
 const { db } = require("../db/connection");
 
 const port = 3000;
@@ -18,5 +18,9 @@ app.get("/musicians/:id", async (req, res) => {
   res.json(currentMusician);
 });
 
+app.get("/bands", async (req, res) => {
+  const allBands = await Band.findAll();
+  res.json(allBands);
+});
 
 module.exports = app;
