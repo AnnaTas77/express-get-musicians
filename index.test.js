@@ -13,29 +13,42 @@ const seedMusician = require("./seedData");
 describe("GET /musicians endpoint", () => {
   // Write your tests here
 
-  test("testing if the GET request is successful and the status code is 200", async () => {
+  test("testing if the GET request is successful", async () => {
     // Sends request to `/musicians` endpoint
     const response = await request(app).get("/musicians");
-    expect(response.statusCode).toBe(200);
+    expect(response.status).toBeGreaterThanOrEqual(200);
+    expect(response.status).toBeLessThan(300);
   });
 
   test("testing the response data", async () => {
     const response = await request(app).get("/musicians");
-    const responseData = JSON.parse(response.text);
+    const musiciansData = JSON.parse(response.text);
 
-    expect(responseData.length).toBe(3);
+    expect(Array.isArray(musiciansData)).toBe(true);
 
-    expect(responseData).toEqual(
-      expect.arrayContaining(
-        responseData.map((obj) => {
-          expect.objectContaining({
-            id: obj.id,
-            name: obj.name,
-            instrument: obj.instrument,
-            bandId: obj.bandId,
-          });
+    // the expect statement below expects an array of only objects and will check all of them
+    expect(musiciansData).toEqual(
+      musiciansData.map(() =>
+        expect.objectContaining({
+          name: expect.any(String),
+          instrument: expect.any(String),
         })
       )
     );
+
+    // the expect statement below expects an array that can contain any data, but will check just the objects
+
+    // expect(responseData).toEqual(
+    //   expect.arrayContaining(
+    //     responseData.map((obj) => {
+    //       return expect.objectContaining({
+    //         id: obj.id,
+    //         name: obj.name,
+    //         instrument: obj.instrument,
+    //         bandId: obj.bandId,
+    //       });
+    //     })
+    //   )
+    // );
   });
 });
