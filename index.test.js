@@ -52,3 +52,27 @@ describe("GET /musicians endpoint", () => {
     // );
   });
 });
+
+describe("GET /musicians/:id", () => {
+  test("testing if the GET request is successful", async () => {
+    // Sends request to `/musicians/1` endpoint
+    const response = await request(app).get("/musicians/1");
+    expect(response.status).toBeGreaterThanOrEqual(200);
+    expect(response.status).toBeLessThan(300);
+  });
+
+  test("testing the response data", async () => {
+    const response = await request(app).get("/musicians/1");
+    const musicianById = JSON.parse(response.text);
+    // console.log(musicianById);
+
+    expect(typeof musicianById).toBe("object");
+
+    expect(musicianById).toEqual(
+      expect.objectContaining({
+        name: expect.any(String),
+        instrument: expect.any(String),
+      })
+    );
+  });
+});
