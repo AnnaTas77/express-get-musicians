@@ -21,9 +21,19 @@ app.get("/musicians", async (req, res) => {
 app.get("/musicians/:id", async (req, res) => {
   const musicianId = req.params.id;
   const currentMusician = await Musician.findByPk(musicianId);
+
+  if (!currentMusician) {
+    res.status(404).send({ error: "Musician not found." });
+    return;
+  }
+
   res.json(currentMusician);
 });
 
-
+app.post("/musicians", async (req, res) => {
+  const newMusicianObject = req.body;
+  const createdNewMusician = await Musician.create(newMusicianObject);
+  res.status(201).json(createdNewMusician);
+});
 
 module.exports = app;

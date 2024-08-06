@@ -105,3 +105,33 @@ describe("GET /musicians/:id", () => {
   });
 });
 
+describe("POST /musicians", () => {
+  test("testing if the POST request is successful", async () => {
+    const newMusician = {
+      name: "Lady Gaga",
+      instrument: "VocalistVoice",
+    };
+    const response = await request(app).post("/musicians").send(newMusician);
+    expect(response.status).toBeGreaterThanOrEqual(200);
+    expect(response.status).toBeLessThan(300);
+  });
+
+  test("testing the response data", async () => {
+    const newMusician = {
+      name: "Lady Gaga",
+      instrument: "VocalistVoice",
+    };
+    const response = await request(app).post("/musicians").send(newMusician);
+    const receivedNewMusician = JSON.parse(response.text);
+    // console.log(receivedNewMusician);
+
+    expect(typeof receivedNewMusician).toBe("object");
+
+    expect(receivedNewMusician).toEqual(
+      expect.objectContaining({
+        name: expect.any(String),
+        instrument: expect.any(String),
+      })
+    );
+  });
+});
