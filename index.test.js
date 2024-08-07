@@ -109,7 +109,7 @@ describe("POST /musicians", () => {
   test("testing if the POST request is successful", async () => {
     const newMusician = {
       name: "Lady Gaga",
-      instrument: "VocalistVoice",
+      instrument: "Voice",
     };
     const response = await request(app).post("/musicians").send(newMusician);
     expect(response.status).toBeGreaterThanOrEqual(200);
@@ -133,5 +133,43 @@ describe("POST /musicians", () => {
         instrument: expect.any(String),
       })
     );
+  });
+});
+
+describe("PUT /musicians/:id", () => {
+  test("testing if the PUT request is successful", async () => {
+    const newMusician = {
+      name: "Stevie Wonder",
+      instrument: "Voice",
+    };
+    const response = await request(app).put("/musicians/1").send(newMusician);
+    expect(response.status).toBeGreaterThanOrEqual(200);
+    expect(response.status).toBeLessThan(300);
+  });
+
+  test("testing the response data", async () => {
+    const newMusician = {
+      name: "Stevie Wonder",
+      instrument: "Voice",
+    };
+    const response = await request(app).post("/musicians/1").send(newMusician);
+
+    // console.log(response.body);
+    const currentMusician = await Musician.findByPk(1);
+
+    expect(currentMusician).toEqual(
+      expect.objectContaining({ name: "Stevie Wonder", instrument: "Voice" })
+    );
+  });
+});
+
+describe("DELETE /musicians/:id", () => {
+  test("testing if it's deleting (removing) a musician from the database based on the id in the route", async () => {
+    const response = await request(app).delete("/musicians/2");
+
+    // console.log(response.body);
+    const currentMusician = await Musician.findByPk(2);
+
+    expect(currentMusician).toBeNull();
   });
 });

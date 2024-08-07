@@ -36,4 +36,24 @@ app.post("/musicians", async (req, res) => {
   res.status(201).json(createdNewMusician);
 });
 
+app.put("/musicians/:id", async (req, res) => {
+  const currentMusicianId = req.params.id;
+  const newMusicianObject = req.body;
+
+  const createdNewMusician = await Musician.update(newMusicianObject, {
+    where: { id: currentMusicianId },
+  });
+  res.json(createdNewMusician);
+});
+
+app.delete("/musicians/:id", async (req, res) => {
+  const currentMusicianId = req.params.id;
+
+  const currentMusician = await Musician.findByPk(currentMusicianId);
+
+  await currentMusician.destroy();
+
+  res.status(204).send();
+});
+
 module.exports = app;
