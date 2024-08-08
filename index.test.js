@@ -153,7 +153,7 @@ describe("POST /musicians", () => {
     );
   });
 
-  test("receives an error if no valid data is provided in the request body", async () => {
+  test("receives an error if NO valid data is provided in the request body", async () => {
     const nonValidMusician = {};
     const response = await request(app)
       .post("/musicians")
@@ -161,25 +161,41 @@ describe("POST /musicians", () => {
     // console.log(response.body);
 
     expect(response.status).toBe(400);
-    expect(response.body).toEqual({
-      error: [
-        {
-          type: "field",
-          msg: "Invalid value",
-          path: "name",
-          location: "body",
-        },
-        {
-          type: "field",
-          msg: "Invalid value",
-          path: "instrument",
-          location: "body",
-        },
-      ],
-    });
+    expect(response.body).toEqual(
+      expect.objectContaining({
+        error: [
+          {
+            type: "field",
+            msg: "Invalid value",
+            path: "name",
+            location: "body",
+          },
+          {
+            type: "field",
+            value: "",
+            msg: "Invalid value",
+            path: "name",
+            location: "body",
+          },
+          {
+            type: "field",
+            msg: "Invalid value",
+            path: "instrument",
+            location: "body",
+          },
+          {
+            type: "field",
+            value: "",
+            msg: "Invalid value",
+            path: "instrument",
+            location: "body",
+          },
+        ],
+      })
+    );
   });
 
-  test.only("receives an error if NAME and INSTRUMENT are with the incorrect length (Minimum 2, Maximum 20)", async () => {
+  test("receives an error if NAME and INSTRUMENT are with the incorrect length (Minimum 2, Maximum 20)", async () => {
     const newMusician = {
       name: "X",
       instrument: "Z",
@@ -232,6 +248,42 @@ describe("PUT /musicians/:id", () => {
 
     expect(currentMusician).toEqual(
       expect.objectContaining({ name: "Stevie Wonder", instrument: "Voice" })
+    );
+  });
+
+  test("an error is returned in the response body, if the request body contains incorrect data", async () => {
+    const nonValidMusician = {
+      name: "M",
+    };
+    const response = await request(app)
+      .put("/musicians/1")
+      .send(nonValidMusician);
+
+    expect(response.body).toEqual(
+      expect.objectContaining({
+        error: [
+          {
+            type: "field",
+            value: "M",
+            msg: "Invalid value",
+            path: "name",
+            location: "body",
+          },
+          {
+            type: "field",
+            msg: "Invalid value",
+            path: "instrument",
+            location: "body",
+          },
+          {
+            type: "field",
+            value: "",
+            msg: "Invalid value",
+            path: "instrument",
+            location: "body",
+          },
+        ],
+      })
     );
   });
 });

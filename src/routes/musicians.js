@@ -45,15 +45,30 @@ router.post(
   }
 );
 
-router.put("/:id", async (req, res) => {
-  const currentMusicianId = req.params.id;
-  const newMusicianObject = req.body;
+router.put(
+  "/:id",
+  [
+    check("name").notEmpty().trim(),
+    check("name").isLength({ min: 2, max: 20 }),
+    check("instrument").notEmpty().trim(),
+    check("instrument").isLength({ min: 2, max: 20 }),
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
 
-  const createdNewMusician = await Musician.update(newMusicianObject, {
-    where: { id: currentMusicianId },
-  });
-  res.json(createdNewMusician);
-});
+    if (!errors.isEmpty()) {
+      res.status(400).send({ error: errors.array() });
+      return;
+    }
+
+    const currentMusicianId = req.params.id;
+    const newMusicianObject = req.body;
+    const createdNewMusician = await Musician.update(newMusicianObject, {
+      where: { id: currentMusicianId },
+    });
+    res.status(201).json(createdNewMusician);
+  }
+);
 
 router.delete("/:id", async (req, res) => {
   const currentMusicianId = req.params.id;
