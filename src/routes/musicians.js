@@ -24,7 +24,12 @@ router.get("/:id", async (req, res) => {
 //checks that the "name" field in the request.body is not empty and doesn’t only contain whitespace.
 router.post(
   "/",
-  [check("name").notEmpty().trim(), check("instrument").notEmpty().trim()],
+  [
+    check("name").notEmpty().trim(),
+    check("name").isLength({ min: 2, max: 20 }),
+    check("instrument").notEmpty().trim(),
+    check("instrument").isLength({ min: 2, max: 20 }),
+  ],
   async (req, res) => {
     //validate the results of your checks and store them in a variable named errors
     const errors = validationResult(req);

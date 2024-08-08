@@ -158,7 +158,7 @@ describe("POST /musicians", () => {
     const response = await request(app)
       .post("/musicians")
       .send(nonValidMusician);
-    console.log(response.body);
+    // console.log(response.body);
 
     expect(response.status).toBe(400);
     expect(response.body).toEqual({
@@ -171,6 +171,35 @@ describe("POST /musicians", () => {
         },
         {
           type: "field",
+          msg: "Invalid value",
+          path: "instrument",
+          location: "body",
+        },
+      ],
+    });
+  });
+
+  test.only("receives an error if NAME and INSTRUMENT are with the incorrect length (Minimum 2, Maximum 20)", async () => {
+    const newMusician = {
+      name: "X",
+      instrument: "Z",
+    };
+    const response = await request(app).post("/musicians").send(newMusician);
+
+    expect(response.status).toBe(400);
+
+    expect(response.body).toEqual({
+      error: [
+        {
+          type: "field",
+          value: "X",
+          msg: "Invalid value",
+          path: "name",
+          location: "body",
+        },
+        {
+          type: "field",
+          value: "Z",
           msg: "Invalid value",
           path: "instrument",
           location: "body",
