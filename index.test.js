@@ -152,6 +152,32 @@ describe("POST /musicians", () => {
       })
     );
   });
+
+  test("receives an error if no valid data is provided in the request body", async () => {
+    const nonValidMusician = {};
+    const response = await request(app)
+      .post("/musicians")
+      .send(nonValidMusician);
+    console.log(response.body);
+
+    expect(response.status).toBe(400);
+    expect(response.body).toEqual({
+      error: [
+        {
+          type: "field",
+          msg: "Invalid value",
+          path: "name",
+          location: "body",
+        },
+        {
+          type: "field",
+          msg: "Invalid value",
+          path: "instrument",
+          location: "body",
+        },
+      ],
+    });
+  });
 });
 
 describe("PUT /musicians/:id", () => {

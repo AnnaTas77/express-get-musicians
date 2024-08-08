@@ -1,5 +1,6 @@
 const { Router } = require("express");
 const { Musician } = require("../../models/index");
+const { check, validationResult } = require("express-validator");
 
 const router = Router();
 
@@ -20,11 +21,24 @@ router.get("/:id", async (req, res) => {
   res.json(currentMusician);
 });
 
-router.post("/", async (req, res) => {
-  const newMusicianObject = req.body;
-  const createdNewMusician = await Musician.create(newMusicianObject);
-  res.status(201).json(createdNewMusician);
-});
+//checks that the "name" field in the request.body is not empty and doesn’t only contain whitespace.
+router.post(
+  "/",
+  [check("name").notEmpty().trim(), check("instrument").notEmpty().trim()],
+  async (req, res) => {
+    //validate the results of your checks and store them in a variable named errors
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      res.status(400).json({ error: errors.array() });
+      return;
+    }
+
+    const newMusicianObject = req.body;
+    const createdNewMusician = await Musician.create(newMusicianObject);
+    res.status(201).json(createdNewMusician);
+  }
+);
 
 router.put("/:id", async (req, res) => {
   const currentMusicianId = req.params.id;
