@@ -6,15 +6,12 @@ const { describe, it, expect, beforeAll, afterEach } = require("@jest/globals");
 
 const request = require("supertest");
 const { db } = require("./db/connection");
-const { Musician } = require("./models/index");
+const { Musician, Band } = require("./models/index");
 const app = require("./src/app");
 const seedMusician = require("./seedData");
 
 describe("GET /bands endpoint", () => {
-  // Write your tests here
-
   test("testing if the GET request is successful", async () => {
-    // Sends request to `/musicians` endpoint
     const response = await request(app).get("/bands");
     expect(response.status).toBeGreaterThanOrEqual(200);
     expect(response.status).toBeLessThan(300);
@@ -25,7 +22,6 @@ describe("GET /bands endpoint", () => {
     const bandsData = JSON.parse(response.text);
 
     expect(Array.isArray(bandsData)).toBe(true);
-
     // the expect statement below expects an array of only objects and will check all of them
     expect(bandsData).toEqual(
       bandsData.map(() =>
@@ -34,6 +30,28 @@ describe("GET /bands endpoint", () => {
           genre: expect.any(String),
         })
       )
+    );
+  });
+});
+
+describe("GET /bands/:id endpoint", () => {
+  test("testing if the GET request is successful", async () => {
+    const response = await request(app).get("/bands/1");
+    expect(response.status).toBeGreaterThanOrEqual(200);
+    expect(response.status).toBeLessThan(300);
+  });
+
+  test("testing the response data", async () => {
+    const response = await request(app).get("/bands/1");
+    const bandsDataFromResponse = response.body;
+    const bandsDataFromDB = (await Band.findByPk(1)).toJSON();
+
+    expect(bandsDataFromResponse).toEqual(
+      expect.objectContaining({
+        id: bandsDataFromDB.id,
+        name: bandsDataFromDB.name,
+        genre: bandsDataFromDB.genre,
+      })
     );
   });
 });

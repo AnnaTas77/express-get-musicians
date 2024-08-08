@@ -8,4 +8,11 @@ router.get("/", async (req, res) => {
   res.json(allBands);
 });
 
+router.get("/:id", async (req, res) => {
+  const bandId = req.params.id;
+  const currentBand = await Band.findByPk(bandId);
+
+  res.status(200).send(currentBand);
+});
+
 module.exports = router;
